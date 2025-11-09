@@ -1,0 +1,25 @@
+Create a chatbot that can be integrated into a website and answer questions based on uploaded files (CSV, DOCX, PDF) and CMS content, using a vector database.
+Project Scope
+Frontend – Chatbot Installation and Styling
+Embed chatbot window on a sample HTML page.
+Simple "bubble chat" UI (similar to ChatGPT).
+Responsive design (works on desktop and mobile).
+Ability to type and send questions.
+Styling (colors, fonts, borders, animations, etc.).
+Backend (Microservice) – Data Analysis
+API for receiving user queries.
+API for file uploads (CSV, DOCX, PDF).
+API for importing CMS content (e.g., as JSON).
+Convert content to vector format (embedding).
+Respond to user questions based on semantically closest fragments.
+Vector Database
+Use Qdrant Cloud or another free alternative (e.g., Weaviate, Pinecone, Milvus).
+Insert and search vectors (texts).
+Store metadata (source, file type, etc.).
+Integration
+Connect frontend chatbot component with the backend.
+Send questions and receive answers.
+Handle errors (e.g., no data, timeout, etc.).
+how to do CMS endopint i alrady have y rag endpoint  working and upload endopint
+
+either the admin can push content via JSON to the chatbot, or the chatbot can pull it directly from the CMS. The choice depends on whether you want manual control or automatic updates. which of them think is good ?
