@@ -16,7 +16,7 @@ async function main() {
 	app.use(cookieParser());
 	app.use(
 		cors({
-			origin: ["https://echobot.mohamedbgz.dev/*"], // Frontend URLs
+			origin: ["https://echobot.mohamedbgz.dev"], // Frontend URLs
 			credentials: true,
 
 			methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
