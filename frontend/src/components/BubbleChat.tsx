@@ -37,6 +37,9 @@ interface BubbleChatProps {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const BubbleChat:React.FC<BubbleChatProps> = ({isVisible, setIsVisible}) => {
+
+   const apiUrl = import.meta.env.VITE_API_URL;
+   
   const handleRagChatAfterUpload = async (file: UploadedFile) => {
     try {
       const payload = {
@@ -66,7 +69,7 @@ export const BubbleChat:React.FC<BubbleChatProps> = ({isVisible, setIsVisible}) 
     }
   };
 
-  const apiUrl = import.meta.env.VITE_API_URL;
+ 
 
   const parentVariants = {
     hidden: { opacity: 0 },
