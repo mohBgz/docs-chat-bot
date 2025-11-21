@@ -9,39 +9,42 @@ import clientQdrant from "./services/vectorDb/qdrantClient.js";
 dotenv.config();
 
 async function main() {
-  const app = express(); 
-  const PORT = process.env.PORT || 3000;
+	const app = express();
+	const PORT = process.env.PORT || 3000;
 
-  // Middleware
-  app.use(cookieParser());
-  app.use(
-    cors({
-      origin: ["http://localhost:5173", "https://echobot.mohamedbgz.dev/"],
-      credentials: true,
-    })
-  );
-  app.use(express.json());
-  
-  // Health check route
-  app.get("/", (req, res) => {
-    res.send("Server is running!");
-  });
+	// Middleware
+	app.use(cookieParser());
+	app.use(
+		cors({
+			origin: ["http://localhost:5173", "https://echobot.mohamedbgz.dev/"],
+			credentials: true,
 
-  // API routes
-  app.use("/api",routes);
+			methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
+			allowedHeaders: ["Content-Type", "Authorization"],
+		})
+	);
+	app.use(express.json());
 
-  // Start server
-  app.listen(PORT, () => {
-    console.log(`Server listening on http://localhost:${PORT}`);
-  });
+	// Health check route
+	app.get("/", (req, res) => {
+		res.send("Server is running!");
+	});
 
-  // Test Qdrant connection
-  try {
-    const result = await clientQdrant.getCollections();
-    console.log("Collections:", result.collections);
-  } catch (err) {
-    console.error("Qdrant connection error:", err);
-  }
+	// API routes
+	app.use("/api", routes);
+
+	// Start server
+	app.listen(PORT, () => {
+		console.log(`Server listening on http://localhost:${PORT}`);
+	});
+
+	// Test Qdrant connection
+	try {
+		const result = await clientQdrant.getCollections();
+		console.log("Collections:", result.collections);
+	} catch (err) {
+		console.error("Qdrant connection error:", err);
+	}
 }
 
 main();
