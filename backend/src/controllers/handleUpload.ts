@@ -18,7 +18,7 @@ export const handleUpload = async (req: Request, res: Response) => {
       httpOnly: true,
       maxAge: 1000 * 60 * 60, // 1 hour
       sameSite: "lax",
-      secure: false,
+      secure: true,
     });
   }
   const files = req.files as Express.Multer.File[] | undefined;
