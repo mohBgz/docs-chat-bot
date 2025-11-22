@@ -17,7 +17,7 @@ export const handleUpload = async (req: Request, res: Response) => {
     res.cookie("sessionId", sessionId, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60, // 1 hour
-      sameSite: "lax",
+      sameSite: "none",
       secure: true,
     });
   }
