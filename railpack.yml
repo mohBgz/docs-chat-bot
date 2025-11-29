@@ -1,9 +1,0 @@
-services:
-  backend:
-    directory: backend
-    build:
-      engine: Node
-      command: npm install && npm run build
-    run:
-      engine: Node
-      command: node dist/index.js
