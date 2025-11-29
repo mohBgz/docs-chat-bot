@@ -141,10 +141,13 @@ main {
 	border-radius: 16px;
 	bottom: 20px;
 	right: 20px;
-	width: 400px;
-	height: 600px;
+	width: 600px;
+	height: 700px;
 }
 
+.logo{
+	/* max-height: 25px; */
+}
 .highlight {
 	background: linear-gradient(rgb(27, 23, 248), rgb(148, 150, 253));
 	color: white;

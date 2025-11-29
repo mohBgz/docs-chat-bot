@@ -23,6 +23,7 @@ import {
 	Trash,
 	LoaderCircle,
 	CheckLine,
+	Check,
 } from "lucide-react";
 
 import { generateGreeting } from "../utils/greetingsGenerator.js";
@@ -73,6 +74,12 @@ export const BubbleChat: React.FC<BubbleChatProps> = ({
 				[mode]: [answerMessage],
 			}));
 
+			// Stop any previous interval
+			if (intervalRef.current) {
+				clearInterval(intervalRef.current);
+				intervalRef.current = undefined;
+			}
+
 			let index = 0;
 
 			if (answerMessage.text.length > 5) {
@@ -86,6 +93,8 @@ export const BubbleChat: React.FC<BubbleChatProps> = ({
 					const msg = updated[mode][lastIndex];
 
 					if (index >= msg.text.length) {
+						clearInterval(intervalRef.current);
+						intervalRef.current = undefined;
 						setIsTyping(false);
 						return updated;
 					}
@@ -210,7 +219,7 @@ export const BubbleChat: React.FC<BubbleChatProps> = ({
 				if (mode !== "chat" && !selectedFilesByMode[mode] && files.length > 0) {
 					setSelectedFilesByMode((prev) => ({
 						...prev,
-						[mode]: files[0],
+						[mode]: files[files.length-1],
 					}));
 					setIsPanelOpen(true);
 				}
@@ -225,39 +234,27 @@ export const BubbleChat: React.FC<BubbleChatProps> = ({
 		fetchFiles();
 	}, [selectedFilesByMode, mode]);
 
-	useEffect(() => {
-		if (isTyping) {
-			console.log("Typing started!");
-		} else {
-			console.log("Typing ended!");
-			clearInterval(intervalRef.current);
-			intervalRef.current = undefined;
-		}
-	}, [isTyping]);
-
 	//const [hasSentGreeting, setHasSentGreeting] = useState(false);
 
 	useEffect(() => {
-		if ((mode === "docs" || mode === "cms") && selectedFilesByMode[mode]) {
+		if ((mode === "docs" || mode === "cms") && selectedFilesByMode[mode] ) {
 			handleRagChatAfterUpload(selectedFilesByMode[mode]);
 		}
 	}, [selectedFilesByMode.docs?.id, selectedFilesByMode.cms?.id]); // ✅ Clearer and more explicit
 
-useEffect(() => {
-	const chatContainer = chatContainerRef.current;
-	if (!chatContainer) return;
+	// useEffect(() => {
+	// 	const chatContainer = chatContainerRef.current;
+	// 	if (!chatContainer) return;
 
-	const isNearBottom =
-		chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 100;
+	// 	const isNearBottom =
+	// 		chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 100;
 
-	if (isNearBottom) {
-		requestAnimationFrame(() => {
-			chatContainer.scrollTop = chatContainer.scrollHeight;
-		});
-	}
-}, [messagesByMode]);
-
-
+	// 	if (isNearBottom) {
+	// 		requestAnimationFrame(() => {
+	// 			chatContainer.scrollTop = chatContainer.scrollHeight;
+	// 		});
+	// 	}
+	// }, [messagesByMode]);
 
 	// Reusable upload function for both drag-drop and file input
 	const uploadDocs = async (files: FileList) => {
@@ -416,6 +413,8 @@ useEffect(() => {
 					const msg = updated[mode][lastIndex];
 
 					if (index >= msg.text.length) {
+						clearInterval(intervalRef.current);
+						intervalRef.current = undefined;
 						setIsTyping(false);
 						return updated;
 					}
@@ -465,16 +464,13 @@ useEffect(() => {
 		<div
 			className="
     flex flex-col
-   
     drop-shadow-xl
     md:rounded-2xl
     overflow-hidden
-		w-full
-		h-full
+	w-full
+	h-full
     shadow-lg
     bg-gradient-to-b from-gray-950 to-gray-900
-	
-    
   "
 		>
 			{/* Header */}
@@ -563,21 +559,26 @@ useEffect(() => {
 						</span>
 					</div>
 
-					<div className="flex gap-5 md0:gap-2 justify-between items-center">
+					<div className="flex gap-8 md0:gap-2 justify-between items-center">
 						{/* Show selected file */}
 						{selectedFilesByMode[mode] && (
 							<div
 								className={`select-none ${
 									!isPanelOpen ? "text-cyan-500" : "text-gray-300"
 								}  text-sm hover:drop-shadow-md hover:drop-shadow-gray-800 flex items-center gap-2 
-								max-w-[6rem] overflow-hidden md:max-w-none md:overflow-visible`}
+								max-w-[6rem] md:max-w-none `}
 							>
 								{selectedFilesByMode[mode] && (
 									<CheckLine className="flex-shrink-0 " />
 								)}
 
-								<span className="truncate">
-									{selectedFilesByMode[mode].filename}
+								<span>
+									{displayName(
+										displayName(
+											capitalizeFirstLetter(selectedFilesByMode[mode].filename),
+											12
+										)
+									)}
 								</span>
 							</div>
 						)}
@@ -659,12 +660,9 @@ useEffect(() => {
                          */}
 											{mode === "cms" && <Braces className="text-gray-300" />}
 
-											<div
-												className="flex-col justify-center max-w-[4rem] overflow-hidden md:max-w-[12rem]    
-  md:overflow-visible md:text-clip "
-											>
-												<div className="text-white font-semibold truncate">
-													{capitalizeFirstLetter(file.filename)}
+											<div className="flex-col justify-center max-w-[4rem]  md:max-w-[12rem]">
+												<div className="text-white font-semibold">
+													{displayName(capitalizeFirstLetter(file.filename))}
 												</div>
 												<div className="text-white/60">
 													{bytesToKb(file.size)} KB
@@ -672,22 +670,21 @@ useEffect(() => {
 											</div>
 										</div>
 
-										{selectedFilesByMode[mode] &&
-											selectedFilesByMode[mode].id === file.id && (
-												<div className="mt-1.5 text-sm text-gray-300 flex items-center gap-2">
-													<span className="bg-gray-800/50 px-1 py-0.5 rounded-full text-xs text-center text-blue-400">
-														{formatTimestamp(
-															selectedFilesByMode[mode].uploaded_at
-														)}
-													</span>
-													<span className="text-gray-400 text-xs select-none">
-														uploaded
-													</span>
-												</div>
-											)}
+										<div className="mt-1.5 text-sm text-gray-300 flex flex-col-reverse md:flex-row gap-1 items-center justify-between md:gap-2">
+											<span className="bg-gray-800/50 px-2 py-1 rounded-full text-xs text-center text-blue-400">
+												{formatTimestamp(
+													selectedFilesByMode[mode]!.uploaded_at
+												)}
+											</span>
+											<span className="text-cyan-400 text-xs select-none flex gap-1 ">
+												uploaded 
+												<Check color="#00bfff" size={18} />
+											</span>
+										</div>
 
 										{/* remove icon */}
-										{!isDeleting ? (
+										
+										{ !isDeleting ? (
 											<div className="relative group">
 												{/* Tooltip */}
 												<div
@@ -709,9 +706,9 @@ useEffect(() => {
 														</div>
 													)}
 											</div>
-										) : selectedFilesByMode[mode]?.id === file.id ? (
+										) : selectedFilesByMode[mode]?.id === file.id ?  (
 											<LoaderCircle className="animate-spin text-red-600" />
-										) : null}
+										): null }
 									</motion.div>
 								))}
 
@@ -862,7 +859,7 @@ useEffect(() => {
 								? !uploadedFiles || uploadedFiles["cms"].length === 0
 									? "Upload a CMS file to start"
 									: `Ask me about CMS content: ${
-											displayName(selectedFilesByMode[mode]?.filename!) || ""
+											displayName(selectedFilesByMode[mode]?.filename!, 12) || ""
 									  }`
 								: ""
 						}`}
