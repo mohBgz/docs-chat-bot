@@ -11,6 +11,19 @@ export function ChatWidget() {
 		return () => clearTimeout(timer);
 	}, []);
 
+	useEffect(() => {
+		// When panel opens/closes
+		window.parent.postMessage(
+			{ type: "TOGGLE_CHAT_OVERLAY", isOpen: isVisible },
+			"*"
+		);
+
+		// Listen to parent requests (like overlay click to close)
+		window.addEventListener("message", (event) => {
+			if (event.data?.type === "CLOSE_PANEL") setIsVisible(false);
+		});
+	}, [isVisible]);
+
 	return (
 		<>
 			<button
@@ -24,9 +37,6 @@ export function ChatWidget() {
 					</div>
 				)}
 
-				{/* Glow effect on hover */}
-				<div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-blue-900 rounded-full blur-lg opacity-0 group-hover:opacity-75 transition-opacity" />
-
 				{/* Main Button */}
 				<div className="relative bg-gradient-to-tr from-blue-600 to-blue-900 hover:from-blue-500 hover:to-blue-800 text-white p-4 rounded-full shadow-2xl transition-all transform hover:scale-110">
 					<BotMessageSquare />
@@ -34,7 +44,10 @@ export function ChatWidget() {
 			</button>
 
 			{isVisible && (
-				<BubbleChat isVisible={isVisible} setIsVisible={setIsVisible} />
+				<>
+					<div className="md:h-screen md:w-screen bg-black/50 backdrop-blur-sm"></div>
+					<BubbleChat isVisible={isVisible} setIsVisible={setIsVisible} />
+				</>
 			)}
 		</>
 	);

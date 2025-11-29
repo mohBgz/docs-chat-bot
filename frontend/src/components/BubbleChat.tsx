@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import {
 	BotMessageSquare,
 	X,
+	Minus,
 	Send,
 	MessageCircleMore,
 	File,
@@ -235,7 +236,6 @@ export const BubbleChat: React.FC<BubbleChatProps> = ({
 	}, [isTyping]);
 
 	//const [hasSentGreeting, setHasSentGreeting] = useState(false);
-
 
 	useEffect(() => {
 		if ((mode === "docs" || mode === "cms") && selectedFilesByMode[mode]) {
@@ -465,15 +465,12 @@ export const BubbleChat: React.FC<BubbleChatProps> = ({
 		<div
 			className="
     flex flex-col
-    fixed 
-    inset-0
+   
     drop-shadow-xl
     md:rounded-2xl
     overflow-hidden
-    md:inset-auto
-    md:bottom-5 md:right-2
-    md:max-w-[40vw] md:max-h-[40vh]
-    md: min-w-[600px] md:min-h-[600px]
+		w-full
+		h-full
     shadow-lg
     bg-gradient-to-b from-gray-950 to-gray-900
 	
@@ -499,6 +496,13 @@ export const BubbleChat: React.FC<BubbleChatProps> = ({
 							</div>
 						</div>
 						<div className="flex gap-3">
+							<button
+								onClick={() => {
+									setIsVisible(!isVisible);
+								}}
+							>
+								<Minus size={20} className="text-gray-100" />
+							</button>{" "}
 							<button
 								onClick={() => {
 									setIsVisible(!isVisible);
@@ -568,11 +572,13 @@ export const BubbleChat: React.FC<BubbleChatProps> = ({
 								}  text-sm hover:drop-shadow-md hover:drop-shadow-gray-800 flex items-center gap-2 
 								max-w-[6rem] overflow-hidden md:max-w-none md:overflow-visible`}
 							>
-								{selectedFilesByMode[mode] && <CheckLine className="flex-shrink-0 " />}
+								{selectedFilesByMode[mode] && (
+									<CheckLine className="flex-shrink-0 " />
+								)}
 
-								<span className="truncate">{selectedFilesByMode[mode].filename}</span>
-
-								
+								<span className="truncate">
+									{selectedFilesByMode[mode].filename}
+								</span>
 							</div>
 						)}
 
@@ -653,8 +659,10 @@ export const BubbleChat: React.FC<BubbleChatProps> = ({
                          */}
 											{mode === "cms" && <Braces className="text-gray-300" />}
 
-											<div className="flex-col justify-center max-w-[4rem] overflow-hidden md:max-w-[12rem]    
-  md:overflow-visible md:text-clip ">
+											<div
+												className="flex-col justify-center max-w-[4rem] overflow-hidden md:max-w-[12rem]    
+  md:overflow-visible md:text-clip "
+											>
 												<div className="text-white font-semibold truncate">
 													{capitalizeFirstLetter(file.filename)}
 												</div>
@@ -887,7 +895,7 @@ export const BubbleChat: React.FC<BubbleChatProps> = ({
 				>
 					{isTyping ? (
 						<Square className="text-white animate-pulse" />
-					) : mode !== "chat"  && isPanelOpen ? (
+					) : mode !== "chat" && isPanelOpen ? (
 						<div className="group relative" onClick={handleUploadClick}>
 							{/* Tooltip */}
 							<div
